@@ -1,6 +1,12 @@
 from Xlib import display, X
 from constants import GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH, GAME_WINDOW_X, GAME_WINDOW_Y
 import pyautogui
+import cv2
+import numpy as np
+import random
+
+from utils.obfuscate import get_mouse_x_y_path
+
 
 def get_and_move_display():
     """
@@ -71,12 +77,64 @@ def click_image(image):
         coordinates of image
     """
     # find image on screen
+    
     loc = pyautogui.locationOnScreen(image) #Box type with attributes, left, top, width, height
     point = pyautogui.center(loc)
 
     x, y = point
 
     pyautogui.click(x, y) # click center of image
+
+def drop_icon(image):
+    with pyautogui.hold('shift'):
+        click_image(image)
+
+
+def find_contour_object():
+    """
+    Take screenshot of current game instance. return x, y coordinates of item.
+    """
+    save_window_screenshot()
+    image = cv2.imread('./live_images/game_window.png')
+
+
+    red = ([0, 0, 180], [80, 80, 255])
+    boundaries = [red]
+    # loop over the boundaries
+    for (lower, upper) in boundaries:
+        lower = np.array(lower, dtype="uint8")
+        upper = np.array(upper, dtype="uint8")
+
+        mask = cv2.inRange(image, lower, upper)
+        _, thresh = cv2.threshold(mask, 40, 255, 0)
+        contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    if len(contours) != 0:
+        c = max(contours, key=cv2.contourArea)
+        x, y, w, h = cv2.boundingRect(c)
+
+        x = random.randrange(x + 5, x + max(w - 5, 6))  # 950,960
+        print('x: ', x)
+        y = random.randrange(y + 5, y + max(h - 5, 6))  # 490,500
+        print('y: ', y)
+    
+    return x, y
+
+
+def move_mouse_to_coords(dest_x, dest_y):
+    # start at random y coord on x coord GAME_WINDOW_X
+    start_x = GAME_WINDOW_WIDTH
+    start_y = random.randrange(GAME_WINDOW_Y, GAME_WINDOW_Y + GAME_WINDOW_HEIGHT)
+    points = get_mouse_x_y_path(start_x, start_y, dest_x, dest_y)
+
+    for point in points:
+        # get random time between 0.01 and 0.05
+        rand_duration = random.uniform(0.01, 0.02)
+        pyautogui.moveTo(point[0], point[1], duration=rand_duration)
+
+def mouse_click():
+    rand_duration = random.uniform(0.1, 0.23)
+    pyautogui.click(duration=rand_duration)
+
 
 if __name__ == "__main__":
     get_and_move_display()
