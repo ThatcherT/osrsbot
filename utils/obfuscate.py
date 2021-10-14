@@ -12,6 +12,12 @@ def wind_mouse(start_x, start_y, dest_x, dest_y, G_0=9, W_0=3, M_0=15, D_0=12, m
     M_0 - maximum step size (velocity clip threshold)
     D_0 - distance where wind behavior changes from random to damped
     '''
+
+    rand_multiplier = np.random.uniform(0.75, 1.5)
+    G_0 *= rand_multiplier
+    W_0 *= rand_multiplier
+    M_0 *= rand_multiplier
+    D_0 *= rand_multiplier
     current_x,current_y = start_x,start_y
     v_x = v_y = W_x = W_y = 0
     while (dist:=np.hypot(dest_x-start_x,dest_y-start_y)) >= 1:
