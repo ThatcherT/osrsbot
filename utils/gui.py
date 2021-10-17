@@ -17,17 +17,15 @@ pyautogui.DARWIN_CATCH_UP_TIME = 0.0
 
 
 
-def get_and_move_display():
+def get_and_move_display(character='cuptastic', x = GAME_WINDOW_X, y = GAME_WINDOW_Y):
     """
     Find Runelite running window, resize it and move it to the upper left of the screen.
     """
-    WINDOW_NAME = 'RuneLite - cuptastic'
+    WINDOW_NAME = 'RuneLite - {}'.format(character)
 
     d = display.Display()
     r = d.screen().root
 
-    x = GAME_WINDOW_X
-    y = GAME_WINDOW_Y
     width = GAME_WINDOW_WIDTH
     height = GAME_WINDOW_HEIGHT
 
@@ -172,30 +170,50 @@ def drop_icon(image):
         click_icon(image)
 
 
-def find_contour_object():
+def find_contour_object(color='red'):
     """
-    Take screenshot of current game instance. return x, y coordinates of item.
+    return x, y coordinates of item.
     """
     while True:
+        print('searching for color')
         image = cv2.imread('./live_images/game_window.png')
         # set upper half of image to be black
-        image[0:int(image.shape[0]/4), :] = 0
+        image[0:int(image.shape[0]/3), :] = 0
+        # convert image to hsv
+        image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        # save has image
+        cv2.imwrite('./live_images/game_window_hsv.png', image_hsv)
+        # HSV min is (0, 0, 0) and max is (179, 255, 255)
 
-        bound_color = ([0, 0, 180], [80, 80, 255]) # red
-            
-        boundaries = [bound_color]
-        # loop over the boundaries
-        for (lower, upper) in boundaries:
-            lower = np.array(lower, dtype="uint8")
-            upper = np.array(upper, dtype="uint8")
-            mask = cv2.inRange(image, lower, upper)
-            _, thresh = cv2.threshold(mask, 40, 255, 0)
-            contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+        # very saturated and dark colors
+        S_min = 240
+        S_max = 255
+        V_min = 240
+        V_max = 255
+
+        # hsv hues https://stackoverflow.com/questions/10948589/choosing-the-correct-upper-and-lower-hsv-boundaries-for-color-detection-withcv
+        if color == 'red':
+            H_min = 0
+            H_max = 10
+        elif color == 'purple':
+            H_min = 140
+            H_max = 160
+        lower = np.array([H_min, S_min, V_min], dtype="uint8")
+        upper = np.array([H_max, S_max, V_max], dtype="uint8")
+        print(image_hsv)
+        print('lower', lower)
+        print('upper', upper)
+        mask = cv2.inRange(image_hsv, lower, upper)
+        # _, thresh = cv2.threshold(mask, 40, 255, 0)
+        # save thresh image
+        # cv2.imwrite('./live_images/thresh.png', thresh)
+        # save mask image
+        cv2.imwrite('./live_images/mask.png', mask)
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         if not contours:
             print('No contours found')
-            time.sleep(1)
-            save_window_screenshot()
-            continue
+            # if we return negative, it wasn't found on the screen
+            return -1, -1
         c = max(contours, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(c)
 
