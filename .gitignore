@@ -1,3 +1,5 @@
 .screenshot*
 *.pyc
 utils/__pycache__/
+live_images/game_window.png
+live_images/mini_map.png
