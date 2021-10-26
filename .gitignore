@@ -3,3 +3,6 @@
 utils/__pycache__/
 live_images/game_window.png
 live_images/mini_map.png
+live_images/game_window_hsv.png
+live_images/game_window.png
+live_images/mask.png
