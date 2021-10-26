@@ -51,6 +51,14 @@ def get_and_move_display(character='cuptastic', x = GAME_WINDOW_X, y = GAME_WIND
             d.sync()
     
 
+def save_map_screenshot():
+    """
+    Take a screenshot of the minimap
+    """
+    mini_map = pyautogui.screenshot(region=(630, 65, 100, 75))
+    mini_map.save('./live_images/mini_map.png')
+
+
 def save_window_screenshot():
     """
     Take a screenshot of the entire game window.
@@ -86,14 +94,13 @@ def get_icon_coords(icon, region=None):
     icon_path = './images/icons/{}.png'.format(icon)
     loc = None
     while not loc:
-        print('searching for icon')
+        print('looking for', icon)
         if region:
             loc = pyautogui.locateOnScreen(icon_path, region=region, confidence=0.5)
         else:
-            loc = pyautogui.locateOnScreen(icon_path) #Box type with attributes, left, top, width, height
+            loc = pyautogui.locateOnScreen(icon_path, confidence=.75) #Box type with attributes, left, top, width, height
         if not loc:
             time.sleep(1.5)
-        print(loc)
     point = pyautogui.center(loc)
 
     # icons are 20x20
@@ -170,12 +177,11 @@ def drop_icon(image):
         click_icon(image)
 
 
-def find_contour_object(color='red'):
+def find_contour_object(color='purple', contmax=False, xmin=False, xmax=False, ymin=False, ymax=False):
     """
     return x, y coordinates of item.
     """
     while True:
-        print('searching for color')
         image = cv2.imread('./live_images/game_window.png')
         # set upper half of image to be black
         image[0:int(image.shape[0]/3), :] = 0
@@ -200,28 +206,54 @@ def find_contour_object(color='red'):
             H_max = 160
         lower = np.array([H_min, S_min, V_min], dtype="uint8")
         upper = np.array([H_max, S_max, V_max], dtype="uint8")
-        print(image_hsv)
-        print('lower', lower)
-        print('upper', upper)
         mask = cv2.inRange(image_hsv, lower, upper)
-        # _, thresh = cv2.threshold(mask, 40, 255, 0)
-        # save thresh image
-        # cv2.imwrite('./live_images/thresh.png', thresh)
-        # save mask image
         cv2.imwrite('./live_images/mask.png', mask)
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
         if not contours:
             print('No contours found')
             # if we return negative, it wasn't found on the screen
             return -1, -1
-        c = max(contours, key=cv2.contourArea)
-        x, y, w, h = cv2.boundingRect(c)
+        coordinate_contours = {'x_least': 0, 'y_least': 0, 'x_most': 0, 'y_most': 0}
+        x_max_coord = 0
+        x_min_coord = 500_000 # sufficiently large
+        y_max_coord = 0
+        y_min_coord = 500_000 # sufficiently large
+        for i, c in enumerate(contours):
+            x_coordinate = c[0][0][0]
+            y_coordinate = c[0][0][1]
+            if x_coordinate < x_min_coord:
+                x_min_coord = x_coordinate
+                coordinate_contours['x_least'] = c
+            if x_coordinate > x_max_coord:
+                x_max_coord = x_coordinate
+                coordinate_contours['x_most'] = c
+            if y_coordinate < y_min_coord:
 
-        x = random.randrange(x + 5, x + max(w - 5, 6))  # 950,960
+                y_min_coord = y_coordinate
+                coordinate_contours['y_least'] = c
+            if y_coordinate > y_max_coord:
+                y_max_coord = y_coordinate
+                coordinate_contours['y_most'] = c
+        
+        if xmin:
+            contour = coordinate_contours['x_least']
+        
+        elif xmax:
+            contour = coordinate_contours['x_most']
+        elif ymin:
+            contour = coordinate_contours['y_least']
+        
+        elif ymax:
+            contour = coordinate_contours['y_most']
+        else:
+            contour = max(contours, key=cv2.contourArea)
+        x, y, w, h = cv2.boundingRect(contour)
+        print(x, y, w, h, 'bounding rect')
+
+        x = random.randrange(x, x + w)
         print('x: ', x)
-        y = random.randrange(y + 5, y + max(h - 5, 6))  # 490,500
+        y = random.randrange(y, y + h)
         print('y: ', y)
-
         return x, y
 
 

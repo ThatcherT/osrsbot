@@ -21,7 +21,7 @@ def save_crop_image(image, x_crop=0, y_crop=0, width_crop=0, height_crop=0):
     return cropped_img
 
 
-def find_image_within_image(image, sub_image):
+def find_image_within_image(image, sub_image, threshold=.9):
     """
     args:
         image: path to image to search for
@@ -35,7 +35,6 @@ def find_image_within_image(image, sub_image):
     large_image = cv2.imread(image).astype(np.uint8)
     
     result = cv2.matchTemplate(small_image, large_image, method)
-    threshold = .9
     loc = np.where(result >= threshold)
     pts = loc[::-1]
     for p in pts:
@@ -56,7 +55,6 @@ def find_rgb_within_image(image, rgb_low, rgb_high):
     img = cv2.imread(image)
     for row in img:
         for pixel in row:
-            print(pixel)
             if rgb_low[0] <= pixel[0] <= rgb_high[0] and rgb_low[1] <= pixel[1] <= rgb_high[1] and rgb_low[2] <= pixel[2] <= rgb_high[2]:
                 return True
     return False

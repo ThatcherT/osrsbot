@@ -1,6 +1,6 @@
 from utils.constants import GAME_WINDOW_WIDTH
 from utils.gui import get_and_move_display, save_window_screenshot
-from utils.skills import cut_wood, light_fire, mine_rocks, fish, kill, steal_cakes
+from utils.skills import cut_wood, light_fire, mine_rocks, fish, kill, steal_cakes, agility
 import os
 
 class Bot:
@@ -40,22 +40,23 @@ class Bot:
     def steal_cakes(self):
         print("Stealing cakes")
         steal_cakes()
+    
+    def agility(self, where='varrock'):
+        print('Running')
+        agility(where)
 
 
 if __name__ == '__main__':
     # get argument from command line
     import sys
-
+    print(sys.argv)
     if not len(sys.argv) > 1:
         print("No bot name provided")
         exit()
     else:
-        bots = []
-        x=0
-        for name in sys.argv[1:]: 
-            bot = Bot(name, x)
-            bot.fish('shrimp', 'anchovies')
-
-            # bots.append(bot)
-            # x += GAME_WINDOW_WIDTH
-            
+        x = 0
+        name = sys.argv[1]
+        if len(sys.argv) > 2:
+            x = int(sys.argv[2])
+        bot = Bot(name, x)
+        bot.agility('varrock')
