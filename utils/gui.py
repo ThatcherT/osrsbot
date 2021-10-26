@@ -55,7 +55,7 @@ def save_mini_map_screenshot():
     """
     Take a screenshot of the minimap
     """
-    mini_map = pyautogui.screenshot(region=(630, 65, 100, 75))
+    mini_map = pyautogui.screenshot(region=(610, 45, 170, 140))
     mini_map.save('./live_images/mini_map.png')
     return mini_map
 
@@ -178,14 +178,23 @@ def drop_icon(image):
         click_icon(image)
 
 
-def find_contour_object(color='purple', contmax=False, xmin=False, xmax=False, ymin=False, ymax=False):
+def find_contour_object(color='purple', direction=None):
     """
     return x, y coordinates of item.
     """
+    direction_dict = {
+        'left': 'x_least',
+        'right': 'x_most',
+        'up': 'y_least',
+        'down': 'y_most',
+        'ymiddle': 'y_middle',
+        'xmiddle': 'x_middle',
+        }
+
     while True:
         image = cv2.imread('./live_images/game_window.png')
         # set upper half of image to be black
-        image[0:int(image.shape[0]/3), :] = 0
+        image[0:int(image.shape[0]/6), :] = 0
         # convert image to hsv
         image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         # save has image
@@ -203,8 +212,8 @@ def find_contour_object(color='purple', contmax=False, xmin=False, xmax=False, y
             H_min = 0
             H_max = 10
         elif color == 'purple':
-            H_min = 140
-            H_max = 160
+            H_min = 135
+            H_max = 170
         lower = np.array([H_min, S_min, V_min], dtype="uint8")
         upper = np.array([H_max, S_max, V_max], dtype="uint8")
         mask = cv2.inRange(image_hsv, lower, upper)
@@ -214,14 +223,16 @@ def find_contour_object(color='purple', contmax=False, xmin=False, xmax=False, y
             print('No contours found')
             # if we return negative, it wasn't found on the screen
             return -1, -1
-        coordinate_contours = {'x_least': 0, 'y_least': 0, 'x_most': 0, 'y_most': 0}
+        coordinate_contours = {}
         x_max_coord = 0
         x_min_coord = 500_000 # sufficiently large
         y_max_coord = 0
         y_min_coord = 500_000 # sufficiently large
+        print('contours:', len(contours))
         for i, c in enumerate(contours):
             x_coordinate = c[0][0][0]
             y_coordinate = c[0][0][1]
+            
             if x_coordinate < x_min_coord:
                 x_min_coord = x_coordinate
                 coordinate_contours['x_least'] = c
@@ -229,32 +240,20 @@ def find_contour_object(color='purple', contmax=False, xmin=False, xmax=False, y
                 x_max_coord = x_coordinate
                 coordinate_contours['x_most'] = c
             if y_coordinate < y_min_coord:
-
                 y_min_coord = y_coordinate
                 coordinate_contours['y_least'] = c
             if y_coordinate > y_max_coord:
                 y_max_coord = y_coordinate
                 coordinate_contours['y_most'] = c
-        
-        if xmin:
-            contour = coordinate_contours['x_least']
-        
-        elif xmax:
-            contour = coordinate_contours['x_most']
-        elif ymin:
-            contour = coordinate_contours['y_least']
-        
-        elif ymax:
-            contour = coordinate_contours['y_most']
+        if direction:
+            contour = coordinate_contours[direction_dict[direction]]
         else:
             contour = max(contours, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(contour)
-        print(x, y, w, h, 'bounding rect')
 
-        x = random.randrange(x, x + w)
-        print('x: ', x)
-        y = random.randrange(y, y + h)
-        print('y: ', y)
+        x += w/2
+        y += h/2
+        print('y: ', y, 'x: ', x)
         return x, y
 
 

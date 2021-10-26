@@ -2,11 +2,11 @@ import pyautogui
 import random
 import time
 from utils.constants import GAME_WINDOW_HEIGHT
-
+import os
 
 from utils.gui import (
+    save_mini_map_screenshot,
     click_icon,
-    drop_icon,
     empty_inventory,
     find_contour_object,
     get_icon_coords,
@@ -15,16 +15,46 @@ from utils.gui import (
     count_inventory,
     empty_inventory,
 )
-from utils.images import save_crop_image, find_image_within_image, find_rgb_within_image
+from utils.images import save_crop_image, find_sub_image_within_image, find_rgb_within_image
 
 
 def agility(where='varrock'):
-    while True:        
-        save_map_screenshot()
+    while True:
+        save_window_screenshot()
+        save_mini_map_screenshot()
         # loop through imagines in ./images/agility/varrock
-        import os
+        instruction_dict = {
+            1: ('right', 3.87),
+            2: ('left', 3.86),
+            3: ('left', 3.83),
+            4: ('down', 5.47),
+            5: ('down', 4.87),
+            6: ('right', 5.51),
+            7: ('right', 4.2),
+            8: ('right', 6),
+        }
         for image in os.listdir(f'./images/agility/{where}'):
-            print(image)
+            # find the image in the mini map
+            if find_sub_image_within_image('./live_images/mini_map.png', f'./images/agility/{where}/{image}', threshold=0.7):
+                # get the first character in the string
+                image_number = int(image[0])
+                print('found ', image_number)
+                direction = instruction_dict[image_number][0]
+                save_window_screenshot()
+                x, y = find_contour_object(color='purple', direction=direction)
+                if x == -1 and y == -1:
+                    continue
+                move_mouse_to_coords(x, y, click_and_off_screen=True)
+                activity_time = instruction_dict[image_number][1]
+                sleep_time = random.uniform(activity_time - .2, activity_time + .2)
+                time.sleep(sleep_time)
+                print('searching...')
+
+
+            else:
+                continue
+            
+            
 
 
 def steal_cakes(static=True):
@@ -218,7 +248,7 @@ def check_for_xp_drop(skill, threshold=.9):
     save_crop_image('./live_images/game_window.png', y_crop=90)
 
     # find firemaking xp in top_cropped_window
-    result = find_image_within_image(image='./live_images/cropped_image.png', sub_image=f'./images/xp/{skill}.png', threshold=threshold)
+    result = find_sub_image_within_image(image='./live_images/cropped_image.png', sub_image=f'./images/xp/{skill}.png', threshold=threshold)
 
     if not result:
         print('no xp')
