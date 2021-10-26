@@ -51,12 +51,13 @@ def get_and_move_display(character='cuptastic', x = GAME_WINDOW_X, y = GAME_WIND
             d.sync()
     
 
-def save_map_screenshot():
+def save_mini_map_screenshot():
     """
     Take a screenshot of the minimap
     """
     mini_map = pyautogui.screenshot(region=(630, 65, 100, 75))
     mini_map.save('./live_images/mini_map.png')
+    return mini_map
 
 
 def save_window_screenshot():

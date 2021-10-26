@@ -21,7 +21,7 @@ def save_crop_image(image, x_crop=0, y_crop=0, width_crop=0, height_crop=0):
     return cropped_img
 
 
-def find_image_within_image(image, sub_image, threshold=.9):
+def find_sub_image_within_image(image, sub_image, threshold=.9):
     """
     args:
         image: path to image to search for
