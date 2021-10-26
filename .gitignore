@@ -1,0 +1,3 @@
+.screenshot*
+*.pyc
+utils/__pycache__/
