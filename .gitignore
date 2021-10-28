@@ -6,3 +6,8 @@ live_images/mini_map.png
 live_images/game_window_hsv.png
 live_images/game_window.png
 live_images/mask.png
+live_images/game_window_hsv.png
+live_images/game_window.png
+live_images/mask.png
+utils/__pycache__/skills.cpython-38.pyc
+utils/__pycache__/gui.cpython-38.pyc
