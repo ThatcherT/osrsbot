@@ -1,6 +1,6 @@
 from utils.constants import GAME_WINDOW_WIDTH
 from utils.gui import get_and_move_display, save_window_screenshot
-from utils.skills import cut_wood, light_fire, mine_rocks, fish, kill, steal_cakes, agility
+from utils.skills import cut_wood, light_fire, mine_rocks, fish, kill, steal_cakes, agility, cut_teaks
 import os
 
 class Bot:
@@ -44,6 +44,10 @@ class Bot:
     def agility(self, where='varrock'):
         print('Running')
         agility(where)
+    
+    def cut_teaks(self):
+        print("Cutting teaks")
+        cut_teaks()
 
 
 if __name__ == '__main__':
@@ -59,4 +63,4 @@ if __name__ == '__main__':
         if len(sys.argv) > 2:
             x = int(sys.argv[2])
         bot = Bot(name, x)
-        bot.agility('canafis')
+        bot.steal_cakes()

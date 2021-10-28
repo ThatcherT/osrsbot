@@ -57,6 +57,7 @@ def agility(where='varrock'):
             
 
 
+
 def steal_cakes(static=True):
     # you need to have a red box screen marker on your screen which, when clicked,
     #  will either steal a player or click the ground such that the player won't move
@@ -71,9 +72,9 @@ def steal_cakes(static=True):
             # x, y = find_contour_object(color='purple')
             # move_mouse_to_coords(x, y, click_and_off_screen=False)
             pyautogui.click()
-        pastries = ['cake', 'cake_third', 'cake_third_double','cake_chocolate_third', 'bread']
-        num_items = count_inventory(*pastries)
-        if num_items > 14:
+        pastries = ['cake_third', 'cake_third_double','cake_chocolate_third', 'bread']
+        num_items = count_inventory(*(pastries + ['cake']))
+        if num_items >= 25:
             empty_inventory(*pastries)
             save_window_screenshot()
             x, y = find_contour_object(color='purple')
@@ -141,8 +142,68 @@ def kill():
             pyautogui.click(x, y)
             time.sleep(random.uniform(2, 3))
         else:
-            print('Could not find feathers')        
+            print('Could not find feathers')
 
+
+def cut_teaks():
+    while True:
+        # check the environment
+        save_window_screenshot()
+        x, y = find_contour_object(color='purple')
+        move_mouse_to_coords(x, y, click_and_off_screen=True)
+        while check_if_cutting():
+            continue
+        num_items = count_inventory('teak')
+        if num_items >= 21:
+            # move to leftmost purple contour
+            save_window_screenshot()
+            x, y = find_contour_object(color='purple', direction='left')
+            move_mouse_to_coords(x, y, click_and_off_screen=True)
+            time.sleep(random.uniform(1, 3)) # TODO
+            for i in range(6): # light 6 fires
+                click_icon('tinderbox')
+                print('lighting', 'teak')
+                click_icon('teak')
+            time.sleep(random.uniform(1.8, 2.5))
+
+            # move to leftmost red contour
+            save_window_screenshot()
+            x, y = find_contour_object(color='red', direction='left')
+            move_mouse_to_coords(x, y, click_and_off_screen=True)
+            time.sleep(random.uniform(1, 3)) # TODO
+            for i in range(6): # light 6 fires
+                click_icon('tinderbox')
+                print('lighting', 'teak')
+                click_icon('teak')
+            time.sleep(random.uniform(1.8, 2.5))
+            
+            # move to rightmost red contour
+            save_window_screenshot()
+            x, y = find_contour_object(color='red', direction='right')
+            move_mouse_to_coords(x, y, click_and_off_screen=True)
+            time.sleep(random.uniform(1, 3)) # TODO
+            for i in range(4): # light 4 fires
+                click_icon('tinderbox')
+                print('lighting', 'teak')
+                click_icon('teak')
+            time.sleep(random.uniform(1.8, 2.5))
+
+            # move to rightmost purple contour
+            save_window_screenshot()
+            x, y = find_contour_object(color='purple', direction='right')
+            move_mouse_to_coords(x, y, click_and_off_screen=True)
+            time.sleep(random.uniform(1, 3)) # TODO
+            for i in range(5): # light 5 fires
+                click_icon('tinderbox')
+                print('lighting', 'teak')
+                click_icon('teak')
+            time.sleep(random.uniform(1.8, 2.5))
+        else:
+            time.sleep(random.uniform(7, 8))
+
+            
+        
+        
 def cut_wood():
     while True:
         save_window_screenshot()

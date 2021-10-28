@@ -194,7 +194,7 @@ def find_contour_object(color='purple', direction=None):
     while True:
         image = cv2.imread('./live_images/game_window.png')
         # set upper half of image to be black
-        image[0:int(image.shape[0]/6), :] = 0
+        image[0:int(image.shape[0]/3), :] = 0
         # convert image to hsv
         image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         # save has image
@@ -230,6 +230,8 @@ def find_contour_object(color='purple', direction=None):
         y_min_coord = 500_000 # sufficiently large
         print('contours:', len(contours))
         for i, c in enumerate(contours):
+            if cv2.contourArea(c) < 10: # too small to evaluate
+                continue
             x_coordinate = c[0][0][0]
             y_coordinate = c[0][0][1]
             
