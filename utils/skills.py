@@ -24,14 +24,14 @@ def agility(where='varrock'):
         save_mini_map_screenshot()
         # loop through imagines in ./images/agility/varrock
         instruction_dict = {
-            1: ('right', 3.87),
-            2: ('left', 3.86),
-            3: ('left', 3.83),
-            4: ('down', 5.47),
-            5: ('down', 4.87),
-            6: ('right', 5.51),
-            7: ('right', 4.2),
-            8: ('right', 6),
+            1: ('right', 3),
+            2: ('left', 3.5),
+            3: ('left', 4.5),
+            4: ('down', 3),
+            5: ('down', 4),
+            6: ('right', 4),
+            7: ('right', 3),
+            8: ('right', 6.2),
         }
         for image in os.listdir(f'./images/agility/{where}'):
             # find the image in the mini map

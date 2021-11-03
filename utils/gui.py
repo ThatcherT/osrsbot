@@ -194,7 +194,7 @@ def find_contour_object(color='purple', direction=None):
     while True:
         image = cv2.imread('./live_images/game_window.png')
         # set upper half of image to be black
-        image[0:int(image.shape[0]/3), :] = 0
+        # image[0:int(image.shape[0]/6), :] = 0
         # convert image to hsv
         image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         # save has image
@@ -253,8 +253,8 @@ def find_contour_object(color='purple', direction=None):
             contour = max(contours, key=cv2.contourArea)
         x, y, w, h = cv2.boundingRect(contour)
 
-        x += w/2
-        y += h/2
+        x += random.uniform(w/3, w/3*2)
+        y += random.uniform(h/3, h/3*2)
         print('y: ', y, 'x: ', x)
         return x, y
 
