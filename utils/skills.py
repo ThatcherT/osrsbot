@@ -94,10 +94,7 @@ def fish(*fish_type):
             time.sleep(random.uniform(1, 3))
         num_items = count_inventory(*fish_type)
         if num_items > 20:
-            # empty_inventory(*fish_type)
-            cook('trout')
-            break
-
+            empty_inventory(*fish_type)
 
 def cook(fish_type):
     while True:
@@ -112,13 +109,13 @@ def cook(fish_type):
         time.sleep(random.uniform(3, 5))
         # click space
         pyautogui.press('space')
+        time.sleep(random.uniform(3, 5))
         # check if cooking
         while check_if_cooking():
             continue
-        num_items = count_inventory('burnt_' + fish_type, 'cooked_' + fish_type)
-        if num_items > 20:
-            empty_inventory('burnt_' + fish_type, 'cooked_' + fish_type)
-            break
+    
+        empty_inventory('burnt_fish', 'cooked_' + fish_type)
+        break
 
 
 def kill():
