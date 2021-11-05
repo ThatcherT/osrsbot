@@ -128,7 +128,7 @@ def kill():
         pyautogui.click(duration=random.uniform(.02, .11))
         # move mouse back to original position
         pyautogui.moveTo(current_x, current_y)
-        time.sleep(random.uniform(3, 6))
+        time.sleep(random.uniform(7, 10))
         while check_if_killing():
             time.sleep(random.uniform(1, 3))
         # find ./images/ground_markers/feathers.png on screen

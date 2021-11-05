@@ -16,6 +16,15 @@ pyautogui.MINIMUM_SLEEP = 0.0001
 pyautogui.DARWIN_CATCH_UP_TIME = 0.0
 
 
+def get_and_move_display_lame(character, x = GAME_WINDOW_X, y = GAME_WINDOW_Y):
+    """
+    wIndows
+    """
+    import win32gui
+    WINDOW_NAME = 'RuneLite - {}'.format(character)
+    winda = win32gui.FindWindow(None, WINDOW_NAME)
+    print('moving windwo')
+    win32gui.MoveWindow(winda, x, y, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT, True)
 
 def get_and_move_display(character='cuptastic', x = GAME_WINDOW_X, y = GAME_WINDOW_Y):
     """
