@@ -63,4 +63,5 @@ if __name__ == '__main__':
         if len(sys.argv) > 2:
             x = int(sys.argv[2])
         bot = Bot(name, x)
-        bot.fish('salmon', 'trout')
+        # bot.fish('salmon', 'trout')
+        bot.kill()
